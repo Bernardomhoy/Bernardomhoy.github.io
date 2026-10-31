@@ -416,7 +416,7 @@ const REDES = { Instagram: '', LinkedIn: 'https://www.linkedin.com/in/bernardo-m
 
     // neve
     c.clearRect(0, 0, L, A); c.lineCap = 'round'; c.strokeStyle = '#fff';
-    const vento = 1.3 + tempestade * 26, rolagem = velRol * .62;
+    const vento = 1.3 + tempestade * 26, rolagem = Math.max(-40, Math.min(40, velRol * .62));
     for (const f of flocos) {
       const vx = -vento * f.z * 1.5 + Math.sin(t * .001 + f.f) * .4, vy = (1 + f.z * 1.5 + tempestade * 3) - rolagem * f.z;
       f.x += vx * dt; f.y += vy * dt;
@@ -501,7 +501,7 @@ const REDES = { Instagram: '', LinkedIn: 'https://www.linkedin.com/in/bernardo-m
     const v = q.querySelector('video'), b = q.querySelector('.pausa');
     const marca = () => b.innerHTML = v.paused ? T : P;
     v.addEventListener('play', marca); v.addEventListener('pause', marca); marca();
-    q.addEventListener('click', () => { if (v.paused) { delete q.dataset.parado; if (v.error) v.load(); v.play().catch(() => avisa()); } else { q.dataset.parado = 1; v.pause(); } });
+    q.addEventListener('click', () => { if (v.paused) { delete q.dataset.parado; if (v.error) v.load(); v.play().catch(e => { if (e.name !== 'AbortError') avisa(); }); } else { q.dataset.parado = 1; v.pause(); } });
     const selo = q.querySelector('.selo'), textoSelo = selo.textContent;
     const avisa = () => { selo.textContent = 'Não consegui carregar o vídeo. Toque para tentar de novo.'; };
     v.addEventListener('error', avisa); v.addEventListener('playing', () => { selo.textContent = textoSelo; });
