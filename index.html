@@ -135,6 +135,40 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
 #aviso button:hover{border-color:var(--creme)}
 #grito{position:fixed;inset:0;z-index:61;display:grid;place-items:center;pointer-events:none;font:italic 900 clamp(60px,15vw,260px)/.86 var(--display);text-align:center;text-transform:uppercase;color:#fff;opacity:0}
 
+/* Vidro: expo-glass-effect é só para apps React Native, então no site o efeito é feito em CSS.
+   O prefixo -webkit- é o que faz funcionar no iPhone, e o tom escuro mantém o texto legível sobre qualquer fundo. */
+header,.gh,.mov,.gh-grande,.btn-claro,.tiro,.selo,.pausa,#aviso{
+  background:linear-gradient(135deg,rgba(255,255,255,.26),rgba(255,255,255,.05) 48%),rgba(6,24,74,.36);
+  border:1px solid rgba(255,255,255,.34);color:var(--creme);
+  -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  box-shadow:0 12px 30px -14px rgba(2,10,40,.7),inset 0 1px 0 rgba(255,255,255,.42);
+}
+header,header.fixa{inset:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) auto max(12px,env(safe-area-inset-left));padding:8px 10px 8px 18px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.04) 48%),rgba(6,20,60,.42);
+  -webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  box-shadow:0 12px 30px -14px rgba(2,10,40,.7),inset 0 1px 0 rgba(255,255,255,.42)}
+.gh:hover,.gh-grande:hover,.mov:hover,.btn-claro:hover,.tiro:hover,.pausa:hover{background:linear-gradient(135deg,rgba(255,255,255,.4),rgba(255,255,255,.12) 48%),rgba(6,24,74,.3);color:var(--creme);border-color:#fff}
+.gh-grande small{color:var(--creme)}
+.btn-claro{border-width:1px}
+.mov{color:var(--creme)}
+.tiro{border-radius:14px}
+.selo,.pausa{background:rgba(5,11,28,.46);border-color:rgba(255,255,255,.22)}
+.selo{border-radius:10px}.pausa{border-radius:12px}
+#aviso{border-radius:18px}
+#aviso button{background:rgba(255,255,255,.1)}
+.faixa{background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.05)),rgba(6,24,74,.3);color:var(--creme);
+  -webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);
+  border-block:1px solid rgba(255,255,255,.34);box-shadow:0 18px 40px -22px rgba(2,10,40,.9),inset 0 1px 0 rgba(255,255,255,.3)}
+.faixa span:nth-child(even){color:var(--gelo)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  header,header.fixa,.gh,.mov,.gh-grande,.btn-claro,.tiro,.selo,.pausa,#aviso,.faixa{background:rgba(10,32,92,.94)}
+}
+@media (max-width:760px){
+  /* No celular o desfoque é menor para a rolagem continuar leve. */
+  header,header.fixa,.gh,.mov,.gh-grande,.btn-claro,.tiro,.selo,.pausa,#aviso,.faixa{-webkit-backdrop-filter:blur(10px) saturate(160%);backdrop-filter:blur(10px) saturate(160%)}
+  header,header.fixa{padding:6px 8px 6px 14px}
+}
+
 .js [data-dash]{opacity:0}
 [data-motion="off"] .js [data-dash],.js[data-motion="off"] [data-dash]{opacity:1}
 html[data-motion="off"]{scroll-behavior:auto}
