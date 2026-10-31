@@ -6,6 +6,13 @@
 <title>Bernardo Hoy</title>
 <meta name="description" content="Portfólio de Bernardo Hoy: servidor de Minecraft de graça, radar de notícias, bot de Discord, sistema de presentes para crianças e otimizador de PC.">
 <meta name="theme-color" content="#0a5fe0">
+<link rel="canonical" href="https://bernardomhoy.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bernardomhoy.github.io/">
+<meta property="og:title" content="Bernardo Hoy">
+<meta property="og:description" content="Servidor de Minecraft de graça, radar de notícias, bot de Discord, sistema de presentes para crianças e otimizador de PC.">
+<meta property="og:image" content="https://bernardomhoy.github.io/fubuki.jpg">
+<meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a5fe0'/%3E%3Cpath d='M16 5v22M6.5 10.5l19 11M25.5 10.5l-19 11' stroke='%23fff8ec' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,16 +116,6 @@ h3{font:italic 800 clamp(40px,4.4vw,68px)/.94 var(--display);text-transform:uppe
 .link:hover{color:var(--gelo);gap:13px}
 .sem-link{font-size:14px;color:var(--suave)}
 
-/* Fubuki */
-.dele{position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px;align-items:center;background:var(--azul);padding:90px max(24px,6vw);overflow:hidden;transform:skewY(-1.4deg);margin:40px -2vw}
-.dele>*{transform:skewY(1.4deg)}
-.dele .kj{position:absolute;left:-2vw;top:-4vw;font:900 22vw/1 "Noto Sans JP",sans-serif;color:rgba(255,255,255,.09);pointer-events:none;white-space:nowrap}
-.foto{position:relative;aspect-ratio:1;border-radius:20px;overflow:hidden;box-shadow:0 30px 60px -24px rgba(3,20,70,.9);background:var(--azul-vivo)}
-.foto img{width:100%;height:100%;object-fit:cover}
-.dele h2{font-size:clamp(56px,7.6vw,118px)}
-.dele p{max-width:33em;font-size:18.5px}
-.dele small{font-size:13px;color:var(--creme);display:block;margin-top:18px;opacity:.85}
-
 /* Contato */
 .contato{padding:120px max(20px,5vw) 56px;text-align:center}
 .contato h2{margin-bottom:34px}
@@ -140,7 +137,7 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
 
 .js [data-dash]{opacity:0}
 [data-motion="off"] .js [data-dash],.js[data-motion="off"] [data-dash]{opacity:1}
-.js[data-motion="off"] html{scroll-behavior:auto}
+html[data-motion="off"]{scroll-behavior:auto}
 
 @media (max-width:980px){
   nav{display:none}
@@ -152,8 +149,6 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
   .proj,.proj:nth-of-type(even){display:flex;flex-direction:column;align-items:stretch;padding:24px 0 70px}
   .proj .quadro,.proj:nth-of-type(even) .quadro{order:1}
   .proj .info,.proj:nth-of-type(even) .info{order:2}
-  .dele{grid-template-columns:1fr;padding:74px 24px}
-  .foto{max-width:420px}
   .bloco{padding-top:84px}
   #mascote{width:72px;height:86px}
 }
@@ -185,7 +180,7 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
 
 <header id="topo">
   <a class="marca" href="#inicio">B<i>/</i>H</a>
-  <nav aria-label="Seções"><a href="#projetos">Projetos</a><a href="#shirou">Fubuki</a><a href="#contato">Contato</a></nav>
+  <nav aria-label="Seções"><a href="#projetos">Projetos</a><a href="#contato">Contato</a></nav>
   <button class="mov" id="mov" type="button" aria-pressed="true">Motion blur: ligado</button>
   <a class="gh" href="https://github.com/Bernardomhoy" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-gh"/></svg><span>GitHub</span></a>
 </header>
@@ -320,20 +315,6 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
   </article>
 </section>
 
-<section class="dele" id="shirou">
-  <div class="kj" aria-hidden="true">吹雪</div>
-  <div class="foto" data-dash="e">
-    <img src="fubuki.jpg" width="736" height="735" loading="lazy" alt="Shirou Fubuki, de Inazuma Eleven, de cachecol, com o céu azul ao fundo">
-  </div>
-  <div data-dash="d">
-    <h2 class="mb">Shirou<br>Fubuki</h2>
-    <p>Esse é o personagem que eu levo para a vida. O nome dele quer dizer nevasca, e foi daí que saiu a cara deste site: a neve que corre quando você rola a página, o azul do céu e o cachecol.</p>
-    <p>Aperta o botão e solta o chute dele.</p>
-    <button class="tiro" type="button" data-tiro style="position:static;display:inline-block">Eternal Blizzard</button>
-    <small>Homenagem de fã. Shirou Fubuki e Inazuma Eleven pertencem à Level-5.</small>
-  </div>
-</section>
-
 <section class="contato" id="contato">
   <h2 class="mb" data-dash="e">Bora trocar<br>uma ideia?</h2>
   <a class="gh-mega" href="https://github.com/Bernardomhoy" target="_blank" rel="noopener" data-dash="d"><small>github.com/</small>Bernardomhoy</a>
@@ -341,7 +322,7 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
 </section>
 </main>
 
-<footer>Bernardo Miguel Hoy da Silveira · feito com Claude Code</footer>
+<footer>Bernardo Miguel Hoy da Silveira · feito com Claude Code<br>Shirou Fubuki e Inazuma Eleven pertencem à Level-5. Homenagem de fã.</footer>
 
 <button id="mascote" type="button" data-tiro aria-label="Soltar o Eternal Blizzard">
   <img src="fubuki-recorte.png" alt="">
@@ -352,7 +333,7 @@ footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--sua
 
 <script>
 // Instagram e LinkedIn entram aqui: basta colar o endereço que o botão aparece no site.
-const REDES = { Instagram: '', LinkedIn: '' };
+const REDES = { Instagram: '', LinkedIn: 'https://www.linkedin.com/in/bernardo-miguel-17348734a/' };
 
 (() => {
   const raiz = document.documentElement, $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
@@ -520,7 +501,10 @@ const REDES = { Instagram: '', LinkedIn: '' };
     const v = q.querySelector('video'), b = q.querySelector('.pausa');
     const marca = () => b.innerHTML = v.paused ? T : P;
     v.addEventListener('play', marca); v.addEventListener('pause', marca); marca();
-    q.addEventListener('click', () => { if (v.paused) { delete q.dataset.parado; v.play().catch(() => {}); } else { q.dataset.parado = 1; v.pause(); } });
+    q.addEventListener('click', () => { if (v.paused) { delete q.dataset.parado; if (v.error) v.load(); v.play().catch(() => avisa()); } else { q.dataset.parado = 1; v.pause(); } });
+    const selo = q.querySelector('.selo'), textoSelo = selo.textContent;
+    const avisa = () => { selo.textContent = 'Não consegui carregar o vídeo. Toque para tentar de novo.'; };
+    v.addEventListener('error', avisa); v.addEventListener('playing', () => { selo.textContent = textoSelo; });
     naTela.observe(q);
   });
 
