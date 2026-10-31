@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bernardo Hoy</title>
+<meta name="description" content="Portfólio de Bernardo Hoy: servidor de Minecraft de graça, radar de notícias, bot de Discord, sistema de presentes para crianças e otimizador de PC.">
+<meta name="theme-color" content="#0a5fe0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a5fe0'/%3E%3Cpath d='M16 5v22M6.5 10.5l19 11M25.5 10.5l-19 11' stroke='%23fff8ec' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;1,700;1,800;1,900&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&text=%E5%90%B9%E9%9B%AA%E5%A3%AB%E9%83%8E&display=swap">
+<style>
+/* Paleta tirada da foto do Fubuki: céu azul, cachecol creme, cabelo prateado e gola marinho. */
+:root{
+  --azul:#0a5fe0;--azul-vivo:#1684ff;--noite:#050b1c;--noite-2:#0b1630;--gelo:#9fd8ff;
+  --creme:#fff8ec;--cachecol:#f5e2d0;--prata:#c6c3e0;--marinho:#26385f;--tinta:#16203c;--linha:rgba(255,248,236,.18);
+  --suave:rgba(255,248,236,.72);
+  --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--corpo:"Manrope","Segoe UI",system-ui,sans-serif;--mono:"JetBrains Mono",Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--noite);color:var(--creme);font:500 17px/1.6 var(--corpo);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img,video,svg{display:block}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--creme);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Fundo: o dia azul da foto vira a noite da nevasca conforme a página desce. */
+#ceu{position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg,#0a56d4 0%,var(--azul) 45%,var(--azul-vivo) 100%);will-change:opacity}
+#neve{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
+#eb-neve{position:fixed;inset:0;width:100%;height:100%;z-index:60;pointer-events:none}
+
+/* Barra */
+header{position:fixed;inset:0 0 auto;z-index:40;display:flex;align-items:center;gap:14px;padding:12px max(20px,env(safe-area-inset-right)) 12px max(20px,env(safe-area-inset-left));transition:background .3s,box-shadow .3s}
+header.fixa{background:rgba(5,11,28,.78);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--linha)}
+.marca{font:italic 900 26px/1 var(--display);letter-spacing:.01em;text-decoration:none;margin-right:auto}
+.marca i{color:var(--gelo);font-style:inherit}
+nav{display:flex;gap:20px}
+nav a{text-decoration:none;font-size:15px;color:var(--suave);transition:color .15s}
+nav a:hover{color:var(--creme)}
+.gh{display:inline-flex;align-items:center;gap:9px;text-decoration:none;background:var(--creme);color:var(--tinta);font-weight:700;border-radius:99px;padding:9px 17px;transition:transform .15s,box-shadow .15s}
+.gh:hover{transform:translateY(-2px) skewX(-5deg);box-shadow:0 10px 26px -8px rgba(255,248,236,.7)}
+.gh svg{width:20px;height:20px;flex:none}
+.mov{background:none;border:1px solid var(--linha);border-radius:99px;padding:8px 13px;font-size:13.5px;color:var(--suave);white-space:nowrap}
+.mov:hover{color:var(--creme);border-color:var(--creme)}
+
+/* Abertura */
+.abertura{position:relative;min-height:100svh;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:0 12px;padding:92px max(28px,5vw) 60px;overflow:hidden}
+.kanji{position:absolute;right:-1vw;top:50%;transform:translateY(-50%);font:900 min(38vw,560px)/.9 "Noto Sans JP",sans-serif;color:rgba(255,255,255,.08);writing-mode:vertical-rl;pointer-events:none;user-select:none;letter-spacing:-.03em;white-space:nowrap}
+.texto{position:relative;z-index:2;min-width:0}
+.oi{font:500 14px var(--mono);letter-spacing:.06em;margin:0 0 10px;color:var(--creme)}
+h1{font:italic 900 clamp(84px,14.4vw,230px)/.82 var(--display);letter-spacing:-.01em;margin:0;text-transform:uppercase}
+h1 .ln{display:block;white-space:nowrap}
+h1 .le{display:inline-block;will-change:transform}
+h1 .ln+.ln{color:var(--cachecol);margin-left:.34em}
+.lema{font-size:clamp(18px,1.7vw,23px);line-height:1.45;max-width:30em;margin:26px 0 28px}
+.acoes{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.gh-grande{display:inline-flex;align-items:center;gap:14px;text-decoration:none;background:var(--creme);color:var(--tinta);border-radius:18px;padding:14px 26px 14px 18px;box-shadow:0 18px 40px -16px rgba(3,20,70,.75);transition:transform .15s}
+.gh-grande:hover{transform:translateY(-3px) skewX(-4deg)}
+.gh-grande svg{width:44px;height:44px;flex:none}
+.gh-grande small{display:block;font:500 12.5px var(--mono);color:var(--marinho)}
+.gh-grande b{display:block;font:italic 800 29px/1.05 var(--display);overflow-wrap:anywhere}
+.btn-claro{display:inline-flex;align-items:center;min-height:50px;padding:0 22px;border-radius:14px;border:2px solid var(--creme);text-decoration:none;font-weight:700;background:none;transition:background .15s,color .15s}
+.btn-claro:hover{background:var(--creme);color:var(--tinta)}
+.fubuki-palco{position:relative;z-index:1;align-self:end;justify-self:center;width:min(100%,560px);margin-bottom:-60px}
+.fubuki-palco img{width:118%;max-width:none;margin-left:-9%;height:auto;filter:drop-shadow(0 18px 34px rgba(3,20,70,.45))}
+.tiro{position:absolute;right:-10px;top:1%;z-index:3;border:0;border-radius:12px;background:var(--marinho);color:var(--creme);font:italic 800 21px/1 var(--display);padding:12px 16px;letter-spacing:.02em;transform:skewX(-8deg);box-shadow:0 12px 26px -10px rgba(3,20,70,.9);transition:transform .15s,background .15s}
+.tiro:hover{background:#fff;color:var(--tinta);transform:skewX(-8deg) translateY(-3px)}
+.tiro small{display:block;font:500 11px var(--mono);letter-spacing:0;opacity:.8;margin-top:5px;transform:skewX(8deg)}
+.rolar{position:absolute;left:max(28px,5vw);bottom:18px;font:500 12.5px var(--mono);color:var(--suave)}
+
+/* Faixa que corre com a rolagem */
+.faixa{position:relative;background:var(--creme);color:var(--tinta);overflow:hidden;padding:12px 0;transform:skewY(-1.4deg);margin:0 -2vw;z-index:3}
+.faixa div{display:inline-flex;white-space:nowrap;font:italic 900 clamp(32px,4.4vw,60px)/1 var(--display);text-transform:uppercase;will-change:transform}
+.faixa span{padding:0 22px}
+.faixa span:nth-child(even){color:var(--azul)}
+
+/* Projetos */
+main{position:relative;z-index:2}
+.bloco{padding:110px max(20px,5vw) 40px;max-width:1500px;margin:0 auto}
+.cab{margin-bottom:50px}
+.cab small{font:500 14px var(--mono);color:var(--gelo)}
+h2{font:italic 900 clamp(58px,8.6vw,132px)/.88 var(--display);text-transform:uppercase;margin:6px 0 0}
+.proj{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:26px;align-items:center;padding:44px 0 90px}
+.proj .quadro{grid-column:1/span 7}
+.proj .info{grid-column:8/span 5}
+.proj:nth-of-type(even) .quadro{grid-column:6/span 7;order:2}
+.proj:nth-of-type(even) .info{grid-column:1/span 5;order:1}
+.quadro{position:relative;border-radius:16px;overflow:hidden;background:var(--noite-2);box-shadow:0 34px 70px -28px #000,0 0 0 1px var(--linha);aspect-ratio:16/9;padding:0;border:0;width:100%}
+.quadro video,.quadro img{width:100%;height:100%;object-fit:cover}
+.selo{position:absolute;left:12px;bottom:12px;background:rgba(5,11,28,.84);border-radius:8px;padding:5px 10px;font:500 12px var(--mono);color:var(--creme);text-align:left}
+.pausa{position:absolute;right:12px;bottom:12px;width:38px;height:38px;border-radius:10px;background:rgba(5,11,28,.84);display:grid;place-items:center}
+.pausa svg{width:15px;height:15px;fill:var(--creme)}
+.num{font:500 14px var(--mono);color:var(--gelo)}
+h3{font:italic 800 clamp(40px,4.4vw,68px)/.94 var(--display);text-transform:uppercase;margin:5px 0 14px}
+.info p{margin:0 0 16px;color:rgba(255,248,236,.86)}
+.fatos{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:7px;font-size:15.5px}
+.fatos li{display:grid;grid-template-columns:18px 1fr;gap:8px}
+.fatos li::before{content:"";width:9px;height:2px;background:var(--gelo);margin-top:13px}
+.pilha{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;padding:0;list-style:none;font:500 12.5px var(--mono)}
+.pilha li{border:1px solid var(--linha);border-radius:7px;padding:3px 9px;color:var(--suave)}
+.link{display:inline-flex;align-items:center;gap:8px;font-weight:700;text-decoration:none;border-bottom:2px solid var(--gelo);padding-bottom:2px;transition:color .15s,gap .15s}
+.link:hover{color:var(--gelo);gap:13px}
+.sem-link{font-size:14px;color:var(--suave)}
+
+/* Fubuki */
+.dele{position:relative;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px;align-items:center;background:var(--azul);padding:90px max(24px,6vw);overflow:hidden;transform:skewY(-1.4deg);margin:40px -2vw}
+.dele>*{transform:skewY(1.4deg)}
+.dele .kj{position:absolute;left:-2vw;top:-4vw;font:900 22vw/1 "Noto Sans JP",sans-serif;color:rgba(255,255,255,.09);pointer-events:none;white-space:nowrap}
+.foto{position:relative;aspect-ratio:1;border-radius:20px;overflow:hidden;box-shadow:0 30px 60px -24px rgba(3,20,70,.9);background:var(--azul-vivo)}
+.foto img{width:100%;height:100%;object-fit:cover}
+.dele h2{font-size:clamp(56px,7.6vw,118px)}
+.dele p{max-width:33em;font-size:18.5px}
+.dele small{font-size:13px;color:var(--creme);display:block;margin-top:18px;opacity:.85}
+
+/* Contato */
+.contato{padding:120px max(20px,5vw) 56px;text-align:center}
+.contato h2{margin-bottom:34px}
+.gh-mega{display:block;text-decoration:none;font:italic 900 clamp(40px,10.4vw,172px)/.95 var(--display);text-transform:uppercase;color:var(--creme);overflow-wrap:anywhere;transition:color .15s,transform .2s}
+.gh-mega:hover{color:var(--gelo);transform:skewX(-5deg)}
+.gh-mega small{display:block;font:500 15px var(--mono);text-transform:none;color:var(--gelo);margin-bottom:6px}
+.redes{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:40px}
+footer{padding:26px 20px 34px;text-align:center;font-size:13.5px;color:var(--suave)}
+
+/* Fubuki pequeno que acompanha a rolagem */
+#mascote{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));width:104px;height:124px;z-index:30;background:none;border:0;padding:0;opacity:0;pointer-events:none;transition:opacity .3s}
+#mascote.on{opacity:1;pointer-events:auto}
+#mascote img{width:100%;height:100%;object-fit:cover;object-position:50% 0;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45))}
+
+#aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:45;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;width:min(calc(100% - 32px),660px);padding:11px 15px;border-radius:14px;background:var(--noite-2);box-shadow:0 18px 40px -14px #000,0 0 0 1px var(--linha);font-size:14px}
+#aviso button{border:1px solid var(--linha);background:none;border-radius:9px;padding:5px 11px;font-size:13.5px}
+#aviso button:hover{border-color:var(--creme)}
+#grito{position:fixed;inset:0;z-index:61;display:grid;place-items:center;pointer-events:none;font:italic 900 clamp(60px,15vw,260px)/.86 var(--display);text-align:center;text-transform:uppercase;color:#fff;opacity:0}
+
+.js [data-dash]{opacity:0}
+[data-motion="off"] .js [data-dash],.js[data-motion="off"] [data-dash]{opacity:1}
+.js[data-motion="off"] html{scroll-behavior:auto}
+
+@media (max-width:980px){
+  nav{display:none}
+  .abertura{grid-template-columns:1fr;padding-top:88px;padding-bottom:0;align-content:start}
+  .fubuki-palco{width:min(82%,420px);margin:16px auto -44px;justify-self:center}
+  .tiro{top:6%;right:-5%}
+  .kanji{font-size:82vw;top:62%}
+  .rolar{display:none}
+  .proj,.proj:nth-of-type(even){display:flex;flex-direction:column;align-items:stretch;padding:24px 0 70px}
+  .proj .quadro,.proj:nth-of-type(even) .quadro{order:1}
+  .proj .info,.proj:nth-of-type(even) .info{order:2}
+  .dele{grid-template-columns:1fr;padding:74px 24px}
+  .foto{max-width:420px}
+  .bloco{padding-top:84px}
+  #mascote{width:72px;height:86px}
+}
+@media (max-width:520px){
+  body{font-size:16px}
+  h1{font-size:22.5vw}
+  .selo{font-size:10.5px;left:8px;bottom:8px;right:54px;padding:4px 8px}
+  .pausa{right:8px;bottom:8px}
+  .mov{font-size:0;padding:8px 10px}.mov::before{content:"✦";font-size:14px}
+  .gh span{display:none}.gh{padding:9px}
+  .gh-grande b{font-size:25px}.gh-grande{padding:12px 18px 12px 14px}
+  .tiro{font-size:18px;padding:10px 12px}
+}
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js')</script>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="mbv" x="-5%" y="-40%" width="110%" height="180%"><feGaussianBlur id="mbv-g" stdDeviation="0 0"/></filter>
+    <filter id="mbh" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbh-g" stdDeviation="0 0"/></filter>
+    <symbol id="i-gh" viewBox="0 0 24 24"><path fill="currentColor" d="M12 .6a11.7 11.7 0 0 0-3.7 22.8c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.600-4-1.600-.5-1.400-1.300-1.800-1.300-1.800-1.100-.7.100-.7.100-.7 1.200.1 1.800 1.200 1.800 1.200 1.100 1.800 2.800 1.300 3.500 1 .1-.8.400-1.300.8-1.600-2.600-.3-5.300-1.300-5.300-5.800 0-1.300.5-2.300 1.200-3.100-.1-.3-.5-1.500.1-3.100 0 0 1-.3 3.200 1.200a11 11 0 0 1 5.800 0c2.200-1.500 3.200-1.200 3.200-1.200.6 1.600.2 2.800.1 3.100.7.800 1.200 1.900 1.200 3.100 0 4.500-2.700 5.500-5.300 5.800.4.400.8 1.100.8 2.200v3.300c0 .3.200.7.800.6A11.700 11.700 0 0 0 12 .6z"/></symbol>
+  </defs>
+</svg>
+
+<div id="ceu"></div>
+<canvas id="neve" aria-hidden="true"></canvas>
+
+<header id="topo">
+  <a class="marca" href="#inicio">B<i>/</i>H</a>
+  <nav aria-label="Seções"><a href="#projetos">Projetos</a><a href="#shirou">Fubuki</a><a href="#contato">Contato</a></nav>
+  <button class="mov" id="mov" type="button" aria-pressed="true">Motion blur: ligado</button>
+  <a class="gh" href="https://github.com/Bernardomhoy" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-gh"/></svg><span>GitHub</span></a>
+</header>
+
+<section class="abertura" id="inicio">
+  <div class="kanji" aria-hidden="true">吹雪士郎</div>
+  <div class="texto">
+    <p class="oi" data-dash="e">Oi, eu sou o</p>
+    <h1 id="nome" aria-label="Bernardo Hoy"><span class="ln" aria-hidden="true">Bernardo</span><span class="ln" aria-hidden="true">Hoy</span></h1>
+    <p class="lema" data-dash="e">Eu pego uma ideia e não largo até ela rodar de verdade: servidor, bot, site, app de Windows. Tudo aqui eu construí em parceria com o Claude.</p>
+    <div class="acoes" data-dash="e">
+      <a class="gh-grande" href="https://github.com/Bernardomhoy" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-gh"/></svg><span><small>meu código está aqui</small><b>Bernardomhoy</b></span></a>
+      <a class="btn-claro" href="#projetos">Ver os projetos</a>
+    </div>
+  </div>
+  <div class="fubuki-palco" id="palco" data-dash="d">
+    <img src="fubuki-recorte.png" width="736" height="735" alt="Shirou Fubuki, de Inazuma Eleven, de cachecol">
+    <button class="tiro" type="button" data-tiro>Eternal Blizzard<small>clica e vê</small></button>
+  </div>
+  <div class="rolar" aria-hidden="true">desce devagar, depois desce rápido</div>
+</section>
+
+<div class="faixa" aria-hidden="true"><div id="faixa"></div></div>
+
+<main>
+<section class="bloco" id="projetos">
+  <div class="cab" data-dash="e"><small>5 projetos, todos rodando</small><h2 class="mb">O que eu<br>já fiz</h2></div>
+
+  <article class="proj">
+    <button class="quadro" type="button" data-dash="e" aria-label="Pausar ou tocar o vídeo do servidor de Minecraft">
+      <video muted loop playsinline preload="none" poster="videos/minecraft.jpg" src="videos/minecraft.mp4"></video>
+      <span class="selo">Animação feita com os passos reais da instalação</span>
+      <span class="pausa" aria-hidden="true"></span>
+    </button>
+    <div class="info" data-dash="d">
+      <span class="num">01</span>
+      <h3 class="mb">Servidor de Minecraft de graça</h3>
+      <p>Montei um servidor próprio sem pagar hospedagem. Ele roda no meu PC, com um atalho na área de trabalho, e a galera entra de fora sem eu precisar abrir porta no roteador.</p>
+      <ul class="fatos">
+        <li>Paper no lugar do servidor padrão, que já vem bem mais otimizado</li>
+        <li>6 GB de RAM reservados, em Java 25</li>
+        <li>Túnel do playit.gg para os amigos entrarem de qualquer lugar</li>
+        <li>ViaVersion e ViaBackwards: dá para jogar de outras versões</li>
+        <li>Instalação inteira em um script: baixa, configura e liga</li>
+      </ul>
+      <ul class="pilha"><li>Paper 26.3</li><li>Java 25</li><li>playit.gg</li><li>PowerShell</li></ul>
+      <span class="sem-link"><b>Custo da hospedagem: R$ 0</b></span>
+    </div>
+  </article>
+
+  <article class="proj">
+    <button class="quadro" type="button" data-dash="d" aria-label="Pausar ou tocar o vídeo do Radar de Notícias">
+      <video muted loop playsinline preload="none" poster="videos/radar.jpg" src="videos/radar.mp4"></video>
+      <span class="selo">Gravação real do painel</span>
+      <span class="pausa" aria-hidden="true"></span>
+    </button>
+    <div class="info" data-dash="e">
+      <span class="num">02</span>
+      <h3 class="mb">Radar de Notícias</h3>
+      <p>Um radar diário do Brasil. Todo dia de manhã, ele lê dezenas de veículos, junta as matérias que falam da mesma coisa, pontua e fecha a pauta do dia sozinho.</p>
+      <ul class="fatos">
+        <li>38 feeds de 29 veículos lidos em paralelo</li>
+        <li>5 agentes: caçador, curador, editor-chefe, roteirista e publicador</li>
+        <li>Só entra o que saiu nas últimas 48 horas</li>
+        <li>Toda escolha vem explicada em texto, sem caixa-preta</li>
+      </ul>
+      <ul class="pilha"><li>Python</li><li>GitHub Actions</li><li>RSS</li><li>PWA</li></ul>
+      <a class="link" href="https://github.com/Bernardomhoy/radar-noticias" target="_blank" rel="noopener">Ver o código no GitHub →</a>
+    </div>
+  </article>
+
+  <article class="proj">
+    <button class="quadro" type="button" data-dash="e" aria-label="Pausar ou tocar o vídeo do bot de Discord">
+      <video muted loop playsinline preload="none" poster="videos/bot.jpg" src="videos/bot.mp4"></video>
+      <span class="selo">Gravação real, em modo demonstração</span>
+      <span class="pausa" aria-hidden="true"></span>
+    </button>
+    <div class="info" data-dash="d">
+      <span class="num">03</span>
+      <h3 class="mb">Bot de automação do Discord</h3>
+      <p>Um bot que toma conta do servidor, com um painel próprio para mexer em tudo sem abrir o Discord. As mudanças valem na hora, sem reiniciar nada.</p>
+      <ul class="fatos">
+        <li>Boas-vindas, cargo automático e logs</li>
+        <li>Filtro de palavras e anti-spam com silenciamento</li>
+        <li>Sistema de tickets com botão de abrir</li>
+        <li>Setup automático: cria canais, cargo e categorias num clique</li>
+        <li>Guia de 7 passos em português e inglês que se marca sozinho</li>
+      </ul>
+      <ul class="pilha"><li>Python</li><li>API do Discord</li><li>Painel web</li></ul>
+    </div>
+  </article>
+
+  <article class="proj">
+    <button class="quadro" type="button" data-dash="d" aria-label="Pausar ou tocar o vídeo do sistema de presentes">
+      <video muted loop playsinline preload="none" poster="videos/presentes.jpg" src="videos/presentes.mp4"></video>
+      <span class="selo">Gravação real, com dados fictícios</span>
+      <span class="pausa" aria-hidden="true"></span>
+    </button>
+    <div class="info" data-dash="e">
+      <span class="num">04</span>
+      <h3 class="mb">Nenhuma criança sem presente</h3>
+      <p>Um sistema para a doação de presentes do Dia das Crianças. A família cadastra a criança em menos de um minuto, e a equipe acompanha cada entrega até o presente chegar na mão dela.</p>
+      <ul class="fatos">
+        <li>Quem cadastra vê só o próprio cadastro</li>
+        <li>A lista completa fica só com os colaboradores, com login</li>
+        <li>Senhas guardadas com PBKDF2 e sal, não em texto puro</li>
+        <li>Cada cadastro entra na lista ao vivo, ligado ao Google Sheets</li>
+      </ul>
+      <ul class="pilha"><li>JavaScript</li><li>Google Sheets</li><li>Banco em tempo real</li></ul>
+      <a class="link" href="https://github.com/Bernardomhoy/presentes-2027" target="_blank" rel="noopener">Ver o código no GitHub →</a>
+    </div>
+  </article>
+
+  <article class="proj">
+    <button class="quadro" type="button" data-dash="e" aria-label="Pausar ou tocar o vídeo do NOVA Optimizer">
+      <video muted loop playsinline preload="none" poster="videos/nova.jpg" src="videos/nova.mp4"></video>
+      <span class="selo">Gravação real, no meu PC</span>
+      <span class="pausa" aria-hidden="true"></span>
+    </button>
+    <div class="info" data-dash="d">
+      <span class="num">05</span>
+      <h3 class="mb">NOVA Optimizer</h3>
+      <p>Meu próprio app de otimizar PC para jogos. Identifica o hardware, mostra os sensores ao vivo, encontra os jogos instalados e aplica os ajustes guardando o valor original, para dar para voltar atrás.</p>
+      <ul class="fatos">
+        <li>25 otimizações de energia, GPU, rede, mouse e serviços</li>
+        <li>Backup e ponto de restauração antes de mudar qualquer coisa</li>
+        <li>Acha jogos de Steam, Epic, GOG, Battle.net, Riot, Xbox e mais</li>
+        <li>Motion blur na interface, proporcional à velocidade de cada quadro</li>
+      </ul>
+      <ul class="pilha"><li>Electron</li><li>Node.js</li><li>PowerShell</li><li>C#</li></ul>
+    </div>
+  </article>
+</section>
+
+<section class="dele" id="shirou">
+  <div class="kj" aria-hidden="true">吹雪</div>
+  <div class="foto" data-dash="e">
+    <img src="fubuki.jpg" width="736" height="735" loading="lazy" alt="Shirou Fubuki, de Inazuma Eleven, de cachecol, com o céu azul ao fundo">
+  </div>
+  <div data-dash="d">
+    <h2 class="mb">Shirou<br>Fubuki</h2>
+    <p>Esse é o personagem que eu levo para a vida. O nome dele quer dizer nevasca, e foi daí que saiu a cara deste site: a neve que corre quando você rola a página, o azul do céu e o cachecol.</p>
+    <p>Aperta o botão e solta o chute dele.</p>
+    <button class="tiro" type="button" data-tiro style="position:static;display:inline-block">Eternal Blizzard</button>
+    <small>Homenagem de fã. Shirou Fubuki e Inazuma Eleven pertencem à Level-5.</small>
+  </div>
+</section>
+
+<section class="contato" id="contato">
+  <h2 class="mb" data-dash="e">Bora trocar<br>uma ideia?</h2>
+  <a class="gh-mega" href="https://github.com/Bernardomhoy" target="_blank" rel="noopener" data-dash="d"><small>github.com/</small>Bernardomhoy</a>
+  <div class="redes" id="redes"></div>
+</section>
+</main>
+
+<footer>Bernardo Miguel Hoy da Silveira · feito com Claude Code</footer>
+
+<button id="mascote" type="button" data-tiro aria-label="Soltar o Eternal Blizzard">
+  <img src="fubuki-recorte.png" alt="">
+</button>
+<div id="aviso" hidden><span>Seu sistema pede menos animação.</span><button id="av-des" type="button">Desligar o motion blur</button><button id="av-ok" type="button">Deixar ligado</button></div>
+<canvas id="eb-neve" aria-hidden="true"></canvas>
+<div id="grito" aria-hidden="true">Eternal<br>Blizzard</div>
+
+<script>
+// Instagram e LinkedIn entram aqui: basta colar o endereço que o botão aparece no site.
+const REDES = { Instagram: '', LinkedIn: '' };
+
+(() => {
+  const raiz = document.documentElement, $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const guarda = { ler(k) { try { return localStorage.getItem(k); } catch { return null; } }, por(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+  const pedeMenos = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const celular = () => innerWidth < 760;
+  let movimento = guarda.ler('movimento') !== 'off';
+
+  for (const [nome, url] of Object.entries(REDES)) if (url) {
+    const a = document.createElement('a'); a.className = 'btn-claro'; a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = nome;
+    $('#redes').append(a);
+  }
+
+  // Letras do nome, para cada uma chegar em disparada.
+  const letras = [];
+  $$('#nome .ln').forEach(l => { const t = l.textContent; l.textContent = ''; for (const c of t) { const s = document.createElement('span'); s.className = 'le'; s.textContent = c; l.append(s); letras.push(s); } });
+
+  // ----- Motion blur de verdade: o desfoque é direcional e proporcional à velocidade do quadro.
+  const defs = $('#mbv').parentNode; let nFiltro = 0;
+  const NS = 'http://www.w3.org/2000/svg';
+  function criaFiltro() {
+    const f = document.createElementNS(NS, 'filter'), g = document.createElementNS(NS, 'feGaussianBlur');
+    f.id = 'mb' + (++nFiltro); f.setAttribute('x', '-60%'); f.setAttribute('y', '-5%'); f.setAttribute('width', '220%'); f.setAttribute('height', '110%');
+    f.append(g); defs.append(f); return { f, g };
+  }
+  function dispara(el, { de = -220, ms = 760, atraso = 0 } = {}) {
+    if (!movimento) { el.style.opacity = 1; return; }
+    const { f, g } = criaFiltro(); const grande = el.offsetWidth * el.offsetHeight > 280000;
+    el.style.opacity = 0; el.style.willChange = 'transform';
+    const ini = performance.now() + atraso; let ant = de;
+    (function q(t) {
+      if (t < ini) return requestAnimationFrame(q);
+      const k = Math.min(1, (t - ini) / ms), e = 1 - Math.pow(1 - k, 4), x = de * (1 - e), dx = Math.abs(x - ant); ant = x;
+      el.style.opacity = Math.min(1, k * 4);
+      el.style.transform = `translate3d(${x}px,0,0) skewX(${(de < 0 ? -1 : 1) * Math.min(dx * .35, 12)}deg)`;
+      if (grande) el.style.filter = dx > .5 ? `blur(${Math.min(dx * .22, 8)}px)` : 'none';
+      else { g.setAttribute('stdDeviation', `${Math.min(dx * .85, 42)} 0`); el.style.filter = dx > .3 ? `url(#${f.id})` : 'none'; }
+      if (k < 1) requestAnimationFrame(q); else { el.style.transform = el.style.filter = el.style.willChange = ''; f.remove(); }
+    })(performance.now());
+  }
+  const entrou = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; entrou.unobserve(e.target);
+    const lado = e.target.dataset.dash === 'd' ? 1 : -1;
+    dispara(e.target, { de: lado * (celular() ? 90 : 240) });
+  }), { threshold: .12, rootMargin: '0px 0px -8% 0px' });
+  $$('[data-dash]').forEach(el => entrou.observe(el));
+  letras.forEach((l, i) => dispara(l, { de: -520, ms: 720, atraso: 80 + i * 42 }));
+
+  // ----- Neve: cada floco é desenhado como um rastro do tamanho da distância que andou no quadro.
+  const tela = $('#neve'), c = tela.getContext('2d');
+  const efx = $('#eb-neve'), x = efx.getContext('2d');
+  let L = 0, A = 0, flocos = [];
+  function medir() {
+    const d = Math.min(devicePixelRatio || 1, 1.5);
+    L = innerWidth; A = innerHeight;
+    for (const k of [tela, efx]) { k.width = L * d; k.height = A * d; k.getContext('2d').setTransform(d, 0, 0, d, 0, 0); }
+    const n = celular() ? 70 : 170;
+    while (flocos.length < n) flocos.push({ x: Math.random() * L, y: Math.random() * A, z: .25 + Math.random() * .75, f: Math.random() * 6.3 });
+    flocos.length = n;
+  }
+  addEventListener('resize', medir); medir();
+
+  let velRol = 0, ultRol = scrollY, tempestade = 0, ponteiro = [], t0 = performance.now();
+  const ceu = $('#ceu'), mascote = $('#mascote'), topo = $('#topo'), faixa = $('#faixa'), gV = $('#mbv-g'), gH = $('#mbh-g'), palco = $('#palco'), titulos = $$('.mb');
+  faixa.innerHTML = Array(10).fill('Minecraft|Radar de Notícias|Bot de Discord|Presentes para crianças|NOVA Optimizer').join('|').split('|').map(s => `<span>${s}</span>`).join('');
+  let posFaixa = 0;
+
+  function quadro(t) {
+    requestAnimationFrame(quadro);
+    const dt = Math.min(40, t - t0) / 16.67; t0 = t;
+    const y = scrollY, bruto = y - ultRol; ultRol = y; velRol += (bruto - velRol) * .22;
+    const v = Math.abs(velRol), fim = Math.max(1, A * 1.3);
+    ceu.style.opacity = Math.max(0, 1 - y / fim);
+    topo.classList.toggle('fixa', y > 60);
+    mascote.classList.toggle('on', y > A * .75);
+
+    if (!movimento) { if (!quadro.parou) { quadro.parou = 1; c.clearRect(0, 0, L, A); x.clearRect(0, 0, L, A); for (const e of [...titulos, faixa, mascote, palco]) { e.style.filter = e.style.transform = ''; } raiz.style.removeProperty('--x'); } return; }
+    quadro.parou = 0;
+    tempestade *= .972; if (tempestade < .01) tempestade = 0;
+
+    // neve
+    c.clearRect(0, 0, L, A); c.lineCap = 'round'; c.strokeStyle = '#fff';
+    const vento = 1.3 + tempestade * 26, rolagem = velRol * .62;
+    for (const f of flocos) {
+      const vx = -vento * f.z * 1.5 + Math.sin(t * .001 + f.f) * .4, vy = (1 + f.z * 1.5 + tempestade * 3) - rolagem * f.z;
+      f.x += vx * dt; f.y += vy * dt;
+      if (f.x < -30) f.x += L + 60; else if (f.x > L + 30) f.x -= L + 60;
+      if (f.y < -60) f.y += A + 120; else if (f.y > A + 60) f.y -= A + 120;
+      c.globalAlpha = .28 + f.z * .62; c.lineWidth = .9 + f.z * 2.3;
+      const r = 1.7 + f.z * 1.1;
+      c.beginPath(); c.moveTo(f.x, f.y); c.lineTo(f.x - vx * r - .01, f.y - vy * r); c.stroke();
+    }
+    c.globalAlpha = 1;
+
+    // rastro do mouse
+    x.clearRect(0, 0, L, A);
+    if (ponteiro.length > 1 && t - ponteiro[ponteiro.length - 1].t < 200) {
+      x.lineCap = 'round'; x.strokeStyle = '#d7f0ff';
+      for (let i = 1; i < ponteiro.length; i++) { const k = i / ponteiro.length; x.globalAlpha = k * .5; x.lineWidth = k * 5; x.beginPath(); x.moveTo(ponteiro[i - 1].x, ponteiro[i - 1].y); x.lineTo(ponteiro[i].x, ponteiro[i].y); x.stroke(); }
+      x.globalAlpha = 1;
+    }
+    desenhaChute(t, dt);
+
+    // títulos e faixa desfocam na direção do movimento só enquanto a página corre
+    const borrao = Math.min(v * .42, 18), rapido = borrao > .7;
+    gV.setAttribute('stdDeviation', `0 ${borrao.toFixed(1)}`);
+    for (const h of titulos) h.style.filter = rapido ? 'url(#mbv)' : '';
+    const vf = 1.1 + v * .9; posFaixa = (posFaixa + vf * Math.sign(velRol || 1) * dt) % (faixa.scrollWidth / 2 || 1);
+    gH.setAttribute('stdDeviation', `${Math.min(v * .6, 16).toFixed(1)} 0`);
+    faixa.style.transform = `translate3d(${(posFaixa > 0 ? -posFaixa : -(faixa.scrollWidth / 2) - posFaixa).toFixed(1)}px,0,0)`;
+    faixa.style.filter = v > 1.5 ? 'url(#mbh)' : '';
+
+    // Fubuki reage à rolagem
+    const incl = Math.max(-14, Math.min(14, velRol * .28));
+    mascote.style.transform = `translate3d(${(-Math.abs(velRol) * .7).toFixed(1)}px,${(-velRol * .8).toFixed(1)}px,0) rotate(${incl.toFixed(2)}deg)`;
+    mascote.style.filter = v > 2 ? 'url(#mbv)' : '';
+    if (y < A) { palco.style.transform = palco.style.willChange ? palco.style.transform : `translate3d(0,${(y * .14).toFixed(1)}px,0) rotate(${(y * .012).toFixed(2)}deg)`; }
+  }
+  requestAnimationFrame(quadro);
+
+  addEventListener('pointermove', e => { if (e.pointerType !== 'mouse' || !movimento) return; ponteiro.push({ x: e.clientX, y: e.clientY, t: performance.now() }); if (ponteiro.length > 16) ponteiro.shift(); }, { passive: true });
+
+  // ----- Eternal Blizzard: a bola atravessa a tela congelando o ar e deixando rastro.
+  let chute = null;
+  function desenhaChute(t) {
+    if (!chute) return;
+    const k = (t - chute.t) / 900;
+    if (k >= 1.4) { chute = null; return; }
+    const e = Math.min(1, k), px = chute.x0 + (chute.x1 - chute.x0) * e * e, py = chute.y0 + (chute.y1 - chute.y0) * e * e + Math.sin(e * 3.14) * -70;
+    if (k < 1) {
+      chute.rastro.push({ x: px, y: py, i: Math.random() });
+      for (let i = 0; i < 3; i++) chute.lascas.push({ x: px, y: py, vx: (Math.random() - .5) * 8 + 5, vy: (Math.random() - .5) * 8, v: 1 });
+    }
+    x.lineCap = 'round';
+    const R = chute.rastro;
+    for (let i = 1; i < R.length; i++) { const q = i / R.length; const som = k < 1 ? 1 : Math.max(0, 1.4 - k) / .4; x.globalAlpha = q * q * .9 * som; x.strokeStyle = i % 2 ? '#bfe8ff' : '#fff'; x.lineWidth = q * 34 + 2; x.beginPath(); x.moveTo(R[i - 1].x, R[i - 1].y); x.lineTo(R[i].x, R[i].y); x.stroke(); }
+    x.fillStyle = '#e8f7ff';
+    for (const l of chute.lascas) { l.x += l.vx; l.y += l.vy; l.v -= .022; if (l.v <= 0) continue; x.globalAlpha = l.v; x.beginPath(); x.moveTo(l.x, l.y - 7); x.lineTo(l.x + 3.5, l.y); x.lineTo(l.x, l.y + 7); x.lineTo(l.x - 3.5, l.y); x.fill(); }
+    x.globalAlpha = 1;
+    if (k < 1) {
+      x.save(); x.translate(px, py); x.rotate(t * .03);
+      x.fillStyle = '#fff'; x.beginPath(); x.arc(0, 0, 25, 0, 6.29); x.fill();
+      x.fillStyle = '#16203c'; for (let i = 0; i < 5; i++) { const a = i * 1.257; x.beginPath(); x.arc(Math.cos(a) * 14, Math.sin(a) * 14, 5.5, 0, 6.29); x.fill(); } x.beginPath(); x.arc(0, 0, 6, 0, 6.29); x.fill();
+      x.restore();
+    }
+  }
+  function eternalBlizzard(origem) {
+    if (!movimento) return;
+    const r = origem.getBoundingClientRect();
+    tempestade = 1;
+    chute = { t: performance.now(), x0: r.left + r.width / 2, y0: r.top + r.height / 2, x1: r.left > L / 2 ? -80 : L + 80, y1: A * (.2 + Math.random() * .3), rastro: [], lascas: [] };
+    const g = $('#grito');
+    g.animate([{ opacity: 0, transform: 'translateX(40vw) skewX(-16deg)', filter: 'blur(24px)' }, { opacity: 1, transform: 'translateX(0) skewX(-6deg)', filter: 'blur(0)', offset: .22 }, { opacity: 1, transform: 'translateX(-2vw) skewX(-6deg)', filter: 'blur(0)', offset: .72 }, { opacity: 0, transform: 'translateX(-46vw) skewX(16deg)', filter: 'blur(26px)' }], { duration: 1500, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    if (!pedeMenos) document.body.animate([{ transform: 'none' }, { transform: 'translate(-7px,4px)' }, { transform: 'translate(7px,-3px)' }, { transform: 'translate(-3px,2px)' }, { transform: 'none' }], { duration: 340 });
+  }
+  $$('[data-tiro]').forEach(b => b.addEventListener('click', () => eternalBlizzard(b)));
+
+  // ----- Vídeos: só carregam e tocam quando aparecem na tela.
+  const P = '<svg viewBox="0 0 10 10"><path d="M1 0h3v10H1zM6 0h3v10H6z"/></svg>', T = '<svg viewBox="0 0 10 10"><path d="M1.500 0v10L9.500 5z"/></svg>';
+  const naTela = new IntersectionObserver(es => es.forEach(e => {
+    const q = e.target, v = q.querySelector('video');
+    if (e.isIntersecting && !q.dataset.parado) v.play().catch(() => {}); else v.pause();
+  }), { threshold: .35 });
+  $$('.quadro').forEach(q => {
+    const v = q.querySelector('video'), b = q.querySelector('.pausa');
+    const marca = () => b.innerHTML = v.paused ? T : P;
+    v.addEventListener('play', marca); v.addEventListener('pause', marca); marca();
+    q.addEventListener('click', () => { if (v.paused) { delete q.dataset.parado; v.play().catch(() => {}); } else { q.dataset.parado = 1; v.pause(); } });
+    naTela.observe(q);
+  });
+
+  // ----- Liga e desliga o movimento.
+  function aplicar() {
+    raiz.dataset.motion = movimento ? 'on' : 'off';
+    const b = $('#mov'); b.textContent = 'Motion blur: ' + (movimento ? 'ligado' : 'desligado'); b.setAttribute('aria-pressed', movimento); b.setAttribute('aria-label', b.textContent);
+    if (!movimento) $$('[data-dash]').forEach(e => { e.style.opacity = 1; e.style.transform = e.style.filter = ''; });
+    $$('[data-tiro]').forEach(e => e.hidden = !movimento);
+    if (!movimento) mascote.style.display = 'none'; else mascote.style.display = '';
+  }
+  $('#mov').addEventListener('click', () => { movimento = !movimento; guarda.por('movimento', movimento ? 'on' : 'off'); $('#aviso').hidden = true; aplicar(); });
+  aplicar();
+  if (pedeMenos && guarda.ler('movimento') === null) {
+    $('#aviso').hidden = false;
+    $('#av-ok').onclick = () => { guarda.por('movimento', 'on'); $('#aviso').hidden = true; };
+    $('#av-des').onclick = () => { $('#mov').click(); };
+  }
+})();
+</script>
+</body>
+</html>
